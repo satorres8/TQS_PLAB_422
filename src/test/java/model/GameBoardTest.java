@@ -25,7 +25,6 @@ class GameBoardTest {
         }
     }
 
-    @Disabled
     @Test
     void testPlacePiece() {
         GameBoard board = new GameBoard();
