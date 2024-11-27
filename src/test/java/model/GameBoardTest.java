@@ -25,6 +25,7 @@ class GameBoardTest {
         }
     }
 
+    // Test Error
     @Test
     void testPlacePiece() {
         GameBoard board = new GameBoard();
