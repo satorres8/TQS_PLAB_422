@@ -48,7 +48,7 @@ public class Tetromino {
         if (type.equals("O")) {
             return; // La pieza "O" no rota, ya que es simétrica.
         }
-        else{
+        else {
             shape = new int[][]{
                     {1} // Cambia a una forma cualquiera para que el test detecte un cambio.
             };
