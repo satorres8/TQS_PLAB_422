@@ -27,15 +27,10 @@
 
     <build>
         <plugins>
-            <!-- Plugin de Maven Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version> <!-- Versión compatible con Java 21 -->
-                <configuration>
-                    <source>21</source>
-                    <target>21</target>
-                </configuration>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version> <!-- Asegúrate de usar una versión compatible con JUnit 5 -->
             </plugin>
 
             <!-- Plugin de JaCoCo para cobertura de código -->

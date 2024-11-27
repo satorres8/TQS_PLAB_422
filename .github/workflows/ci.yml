@@ -13,6 +13,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 0. Check versions
+      - name: Check versions
+        run: |
+          mvn -version
+          java --version
+
+
       # 1. Clonar el repositorio
       - name: Checkout code
         uses: actions/checkout@v3
