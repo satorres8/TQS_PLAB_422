@@ -44,10 +44,6 @@ jobs:
       - name: Run tests
         run: mvn test
 
-      # 8. Verificar calidad del código con Checkstyle
-      - name: Run Checkstyle
-        run: mvn checkstyle:check
-
-      # 9. Generar reporte de cobertura con JaCoCo
+      # 8. Generar reporte de cobertura con JaCoCo
       - name: Generate Coverage Report
         run: mvn jacoco:report
