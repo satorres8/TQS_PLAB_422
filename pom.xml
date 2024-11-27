@@ -9,13 +9,14 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
+        <!-- Configuración de Java 21 -->
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-        <!-- JUnit dependency -->
+        <!-- Dependencia de JUnit para pruebas -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -26,11 +27,22 @@
 
     <build>
         <plugins>
-            <!-- JaCoCo Plugin -->
+            <!-- Plugin de Maven Compiler -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version> <!-- Versión compatible con Java 21 -->
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin de JaCoCo para cobertura de código -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
+                <version>0.8.10</version> <!-- Versión compatible con Java 21 -->
                 <executions>
                     <execution>
                         <goals>
@@ -46,7 +58,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Checkstyle Plugin -->
+
+            <!-- Plugin de Checkstyle para calidad del código -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
