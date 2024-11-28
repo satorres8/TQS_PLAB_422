@@ -2,8 +2,6 @@
 ## satorres8 - 1636391
 ## mscarlos107 - 1631872
 
-Aquí tienes un ejemplo de un archivo `README.md` que describe todo lo que hemos configurado hasta ahora. Este archivo documenta la configuración de los workflows de CI/CD, las reglas de protección de ramas, los hooks locales y el proceso general.
-
 ---
 
 # **Repositorio Git: CI/CD, Protecciones y Automatización**
