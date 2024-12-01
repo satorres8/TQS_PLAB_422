@@ -112,7 +112,7 @@ class GameControllerTest {
         gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_LEFT, 'A'));
         gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_DOWN, 'S'));
 
-        assertEquals(initialX - 1, gameBoard.getTetrominoX(), "La tetromino no se movió a la izquierda correctamente.");
+        assertEquals(initialX - 1 , gameBoard.getTetrominoX(), "La tetromino no se movió a la izquierda correctamente.");
         assertEquals(initialY + 1, gameBoard.getTetrominoY(), "La tetromino no se movió hacia abajo correctamente.");
 
         // Derecha y rotar
