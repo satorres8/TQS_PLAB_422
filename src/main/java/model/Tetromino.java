@@ -56,6 +56,7 @@ public class Tetromino {
     private final TetrominoType type; // Tipo de pieza (I, O, T, S, Z, J, L).
     private int[][] shape; // Matriz que define la forma de la pieza.
 
+
     /**
      * Constructor de Tetromino.
      *
