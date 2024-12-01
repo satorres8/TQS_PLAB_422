@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 public class TetrominoTest {
 
     private void verifyAllRotations(Tetromino tetromino, int[][][] expectedRotations) {
@@ -192,4 +194,73 @@ public class TetrominoTest {
 
     // A continuación, realizamos las pruebas de CAJA BLANCA
 
+    // Probar casos donde la pieza debe Rotar (O) y donde no (el resto de casos)
+    @Test
+    public void testRotateTetrominoO() {
+        // Caso donde el tipo es O y no debe rotar
+        Tetromino tetrominoO = new Tetromino(Tetromino.TetrominoType.O);
+        int[][] shapeBefore = tetrominoO.getShape();
+        tetrominoO.rotate();
+        int[][] shapeAfter = tetrominoO.getShape();
+        assertArrayEquals(shapeBefore, shapeAfter, "La pieza O no debería cambiar al rotar.");
+    }
+
+    @Test
+    public void testRotateTetrominoNonO() {
+        // Caso donde el tipo no es O y debe rotar
+        Tetromino tetrominoL = new Tetromino(Tetromino.TetrominoType.L);
+        int[][] shapeBefore = tetrominoL.getShape();
+        tetrominoL.rotate();
+        int[][] shapeAfter = tetrominoL.getShape();
+        assertFalse(Arrays.deepEquals(shapeBefore, shapeAfter), "La pieza L debería cambiar al rotar.");
+    }
+
+    // Asegurar que se maneja el caso cuando type es null y cuando es un valor válido. (Decision Statement)
+
+    @Test
+    public void testConstructorWithNullType() {
+        // Caso donde el tipo es null y debe lanzar excepción
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Tetromino(null);
+        }, "Se esperaba una IllegalArgumentException al pasar un tipo nulo.");
+    }
+
+    @Test
+    public void testConstructorWithValidType() {
+        // Caso donde el tipo es válido y no debe lanzar excepción
+        assertDoesNotThrow(() -> {
+            new Tetromino(Tetromino.TetrominoType.S);
+        }, "No se esperaba una excepción con un tipo válido.");
+    }
+
+    // Probar el bucle anidado en getOccupiedCells() con diferentes tamaños y contenidos de matriz.
+    // Cubrir ambas ramas de la condición if (cell == 1).
+    // Cobertura de Bucles y Condiciones
+
+    @Test
+    public void testGetOccupiedCellsEmptyShape() {
+        // Caso con matriz vacía
+        Tetromino tetromino = new Tetromino(Tetromino.TetrominoType.I) {
+            {
+                // Sobrescribir la forma con una matriz vacía
+                this.shape = new int[][]{};
+            }
+        };
+        assertEquals(0, tetromino.getOccupiedCells(), "El número de celdas ocupadas debería ser 0 para una matriz vacía.");
+    }
+
+    @Test
+    public void testGetOccupiedCellsMixedShape() {
+        // Caso con matriz que contiene celdas ocupadas y vacías
+        Tetromino tetromino = new Tetromino(Tetromino.TetrominoType.I) {
+            {
+                // Sobrescribir la forma con una matriz personalizada
+                this.shape = new int[][]{
+                        {1, 0},
+                        {0, 1}
+                };
+            }
+        };
+        assertEquals(2, tetromino.getOccupiedCells(), "El número de celdas ocupadas debería ser 2.");
+    }
 }
