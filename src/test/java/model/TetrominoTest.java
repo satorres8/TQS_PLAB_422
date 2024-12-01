@@ -215,5 +215,21 @@ public class TetrominoTest {
         assertFalse(Arrays.deepEquals(shapeBefore, shapeAfter), "La pieza L debería cambiar al rotar.");
     }
 
+    // Asegurar que se maneja el caso cuando type es null y cuando es un valor válido. (Decision Statement)
 
+    @Test
+    public void testConstructorWithNullType() {
+        // Caso donde el tipo es null y debe lanzar excepción
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Tetromino(null);
+        }, "Se esperaba una IllegalArgumentException al pasar un tipo nulo.");
+    }
+
+    @Test
+    public void testConstructorWithValidType() {
+        // Caso donde el tipo es válido y no debe lanzar excepción
+        assertDoesNotThrow(() -> {
+            new Tetromino(Tetromino.TetrominoType.S);
+        }, "No se esperaba una excepción con un tipo válido.");
+    }
 }
