@@ -1,18 +1,24 @@
 package model;
 
+import javax.swing.Timer;
+
 /**
  * Clase que representa el tablero del juego de Tetris.
  * Invariantes:
  * - rows y cols son constantes después de la construcción.
- * - Todas las celdas del tablero contienen valores 0 o 1.
+ * - Todas las celdas del tablero contienen valores >= 0.
  */
 public class GameBoard {
     private final int rows;
     private final int cols;
     private final int[][] board;
+    private Tetromino currentTetromino;
+    private int tetrominoX;
+    private int tetrominoY;
+    private int score = 0; // Sistema de puntuación
 
     /**
-     * Constructor para inicializar el tablero con las dimensiones especificadas.
+     * Constructor para inicializar el tablero.
      * Precondiciones:
      * - rows > 0
      * - cols > 0
@@ -29,6 +35,7 @@ public class GameBoard {
         this.rows = rows;
         this.cols = cols;
         this.board = new int[rows][cols];
+        spawnTetromino();
         assert allCellsAreValid() : "Postcondición fallida: Las celdas iniciales no están todas en 0.";
     }
 
@@ -40,8 +47,12 @@ public class GameBoard {
         return cols;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     /**
-     * Devuelve el valor de una celda en el tablero.
+     * Devuelve el valor de una celda específica en el tablero.
      * Precondiciones:
      * - row >= 0 y row < rows
      * - col >= 0 y col < cols
@@ -50,86 +61,133 @@ public class GameBoard {
      *
      * @param row Fila de la celda.
      * @param col Columna de la celda.
-     * @return Valor de la celda (0 o 1).
+     * @return Valor de la celda (>= 0).
      */
     public int getCell(int row, int col) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
             throw new IndexOutOfBoundsException("Índices fuera del rango del tablero.");
         }
-        return board[row][col];
+        int value = board[row][col];
+        assert value >= 0 : "Postcondición fallida: El valor de la celda no es válido.";
+        return value;
     }
+
 
     /**
      * Establece el valor de una celda específica en el tablero.
      * Precondiciones:
      * - row >= 0 y row < rows
      * - col >= 0 y col < cols
-     * - value == 0 o value == 1
-     * Postcondiciones:
-     * - La celda especificada contiene el valor dado.
+     * - value >= 0
      *
      * @param row   Fila de la celda.
      * @param col   Columna de la celda.
-     * @param value Valor a establecer (0 o 1).
+     * @param value Valor a establecer en la celda.
      */
     public void setCell(int row, int col, int value) {
         if (row < 0 || row >= rows || col < 0 || col >= cols) {
             throw new IndexOutOfBoundsException("Índices fuera del rango del tablero.");
         }
-        if (value != 0 && value != 1) {
-            throw new IllegalArgumentException("El valor debe ser 0 o 1.");
+        if (value < 0) {
+            throw new IllegalArgumentException("El valor debe ser mayor o igual a 0.");
         }
         board[row][col] = value;
-        assert board[row][col] == value : "Postcondición fallida: La celda no contiene el valor esperado.";
+    }
+
+    public void spawnTetromino() {
+        // Precondición: El tablero debe estar en un estado válido.
+        assert allCellsAreValid() : "Precondición fallida: El tablero tiene valores inválidos.";
+
+        // Genera una nueva pieza aleatoria.
+        currentTetromino = new Tetromino(Tetromino.TetrominoType.values()[(int) (Math.random() * 7)]);
+        tetrominoX = cols / 2 - currentTetromino.getShape()[0].length / 2;
+        tetrominoY = 0;
+
+        // Postcondición: La pieza generada no puede ser null.
+        assert currentTetromino != null : "Postcondición fallida: La pieza actual no puede ser null.";
+
+        // Verifica si la nueva pieza puede colocarse en la posición inicial.
+        if (!canMove(tetrominoX, tetrominoY)) {
+            throw new IllegalStateException("No se puede generar una nueva pieza: colisión detectada. Fin del juego.");
+        }
+
+        // Postcondición: Después de generar la nueva pieza, debe haber espacio para moverla.
+        assert canMove(tetrominoX, tetrominoY) : "Postcondición fallida: La nueva pieza no tiene espacio para moverse.";
+
+        // Postcondición: El tablero debe seguir siendo válido.
+        assert allCellsAreValid() : "Postcondición fallida: El tablero tiene valores inválidos después de generar la nueva pieza.";
+    }
+
+    public Tetromino getCurrentTetromino() {
+        return currentTetromino;
+    }
+
+    public int getTetrominoX() {
+        return tetrominoX;
+    }
+
+    public int getTetrominoY() {
+        return tetrominoY;
     }
 
     /**
-     * Coloca una pieza en el tablero si hay espacio disponible.
-     * Precondiciones:
-     * - piece != null
-     * - La posición inicial (row, col) es válida.
+     * Mueve la pieza actual hacia abajo.
      * Postcondiciones:
-     * - La pieza se coloca en el tablero si es posible.
-     * - Si no hay espacio disponible, el estado del tablero no cambia.
+     * - Si la pieza no puede moverse, se coloca en el tablero y se genera una nueva.
      *
-     * @param piece Pieza a colocar.
-     * @param row   Fila inicial para colocar la pieza.
-     * @param col   Columna inicial para colocar la pieza.
-     * @return true si la pieza se coloca con éxito; false si no se puede colocar.
+     * @return true si la pieza se movió; false si se colocó en el tablero.
      */
-    public boolean placePiece(Tetromino piece, int row, int col) {
-        if (piece == null) {
-            throw new IllegalArgumentException("La pieza no puede ser nula.");
+    public boolean moveTetrominoDown() {
+        if (!canMove(tetrominoX, tetrominoY + 1)) {
+            placeTetromino();
+            spawnTetromino();
+            return false;
         }
-
-        int[][] shape = piece.getShape();
-        for (int i = 0; i < shape.length; i++) {
-            for (int j = 0; j < shape[i].length; j++) {
-                if (shape[i][j] == 1) {
-                    int boardRow = row + i;
-                    int boardCol = col + j;
-
-                    if (boardRow < 0 || boardRow >= rows || boardCol < 0 || boardCol >= cols) {
-                        return false; // La pieza se sale del tablero.
-                    }
-                    if (board[boardRow][boardCol] == 1) {
-                        return false; // Colisión detectada.
-                    }
-                }
-            }
-        }
-
-        // Colocar la pieza.
-        for (int i = 0; i < shape.length; i++) {
-            for (int j = 0; j < shape[i].length; j++) {
-                if (shape[i][j] == 1) {
-                    board[row + i][col + j] = 1;
-                }
-            }
-        }
-
-        assert allCellsAreValid() : "Postcondición fallida: El tablero contiene valores inválidos.";
+        tetrominoY++;
         return true;
+    }
+
+    public void moveTetrominoLeft() {
+        if (canMove(tetrominoX - 1, tetrominoY)) {
+            tetrominoX--;
+        }
+    }
+
+    public void moveTetrominoRight() {
+        if (canMove(tetrominoX + 1, tetrominoY)) {
+            tetrominoX++;
+        }
+    }
+
+    public void rotateTetromino() {
+        Tetromino rotatedTetromino = new Tetromino(currentTetromino.getType());
+        rotatedTetromino.rotate();
+        if (canMove(tetrominoX, tetrominoY, rotatedTetromino.getShape())) {
+            currentTetromino.rotate();
+        }
+    }
+
+    /**
+     * Coloca la pieza actual en el tablero.
+     * Postcondiciones:
+     * - La pieza actual se integra en el tablero.
+     * - Las líneas completas se eliminan si es necesario.
+     */
+    public void placeTetromino() {
+        int[][] shape = currentTetromino.getShape();
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[row].length; col++) {
+                if (shape[row][col] == 1) {
+                    int boardY = tetrominoY + row;
+                    int boardX = tetrominoX + col;
+                    if (boardY >= 0 && boardY < rows && boardX >= 0 && boardX < cols) {
+                        board[boardY][boardX] = currentTetromino.getType().ordinal() + 1;
+                    }
+                }
+            }
+        }
+        clearCompleteLines();
+        assert allCellsAreValid() : "Postcondición fallida: El tablero contiene valores inválidos.";
     }
 
     /**
@@ -137,47 +195,59 @@ public class GameBoard {
      * Postcondiciones:
      * - Todas las líneas completas se eliminan.
      * - Las filas superiores se desplazan hacia abajo.
-     * - Devuelve el número de líneas limpiadas.
-     *
-     * @return Número de líneas eliminadas.
      */
-    public int clearCompleteLines() {
-        int linesCleared = 0;
-
-        for (int i = 0; i < rows; i++) {
+    public void clearCompleteLines() {
+        for (int row = 0; row < rows; row++) {
             boolean isComplete = true;
-            for (int j = 0; j < cols; j++) {
-                if (board[i][j] == 0) {
+            for (int col = 0; col < cols; col++) {
+                if (board[row][col] == 0) {
                     isComplete = false;
                     break;
                 }
             }
-
             if (isComplete) {
-                linesCleared++;
-                clearLine(i);
+                clearLine(row);
+                score += 100; // Incrementar puntuación por línea
             }
         }
-
         assert allCellsAreValid() : "Postcondición fallida: El tablero contiene valores inválidos.";
-        return linesCleared;
     }
 
     private void clearLine(int line) {
-        for (int i = line; i > 0; i--) {
-            for (int j = 0; j < cols; j++) {
-                board[i][j] = board[i - 1][j];
-            }
+        for (int row = line; row > 0; row--) {
+            System.arraycopy(board[row - 1], 0, board[row], 0, cols);
         }
-        for (int j = 0; j < cols; j++) {
-            board[0][j] = 0;
+        for (int col = 0; col < cols; col++) {
+            board[0][col] = 0;
         }
     }
 
-    private boolean allCellsAreValid() {
+    private boolean canMove(int newX, int newY) {
+        return canMove(newX, newY, currentTetromino.getShape());
+    }
+
+    private boolean canMove(int newX, int newY, int[][] shape) {
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[row].length; col++) {
+                if (shape[row][col] == 1) {
+                    int boardX = newX + col;
+                    int boardY = newY + row;
+                    if (boardX < 0 || boardX >= cols || boardY >= rows) {
+                        return false;
+                    }
+                    if (boardY >= 0 && board[boardY][boardX] != 0) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean allCellsAreValid() {
         for (int[] row : board) {
             for (int cell : row) {
-                if (cell != 0 && cell != 1) {
+                if (cell < 0) {
                     return false;
                 }
             }
