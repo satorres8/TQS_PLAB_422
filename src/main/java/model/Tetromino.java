@@ -2,6 +2,9 @@ package model;
 
 public class Tetromino {
 
+    public void setShape(int[][] shape) {
+    }
+
     // Enumerado para los tipos de piezas
     public enum TetrominoType {
         I(new int[][]{
