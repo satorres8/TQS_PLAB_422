@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 public class TetrominoTest {
 
     private void verifyAllRotations(Tetromino tetromino, int[][][] expectedRotations) {
@@ -191,5 +193,27 @@ public class TetrominoTest {
     }
 
     // A continuación, realizamos las pruebas de CAJA BLANCA
+
+    // Probar casos donde la pieza debe Rotar (O) y donde no (el resto de casos)
+    @Test
+    public void testRotateTetrominoO() {
+        // Caso donde el tipo es O y no debe rotar
+        Tetromino tetrominoO = new Tetromino(Tetromino.TetrominoType.O);
+        int[][] shapeBefore = tetrominoO.getShape();
+        tetrominoO.rotate();
+        int[][] shapeAfter = tetrominoO.getShape();
+        assertArrayEquals(shapeBefore, shapeAfter, "La pieza O no debería cambiar al rotar.");
+    }
+
+    @Test
+    public void testRotateTetrominoNonO() {
+        // Caso donde el tipo no es O y debe rotar
+        Tetromino tetrominoL = new Tetromino(Tetromino.TetrominoType.L);
+        int[][] shapeBefore = tetrominoL.getShape();
+        tetrominoL.rotate();
+        int[][] shapeAfter = tetrominoL.getShape();
+        assertFalse(Arrays.deepEquals(shapeBefore, shapeAfter), "La pieza L debería cambiar al rotar.");
+    }
+
 
 }
