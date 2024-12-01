@@ -1,10 +1,11 @@
 package model;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Pruebas básicas para la clase GameBoard.
+ * Pruebas para la clase GameBoard del Código 1.
  */
 class GameBoardTest {
 
@@ -22,99 +23,168 @@ class GameBoardTest {
     }
 
     @Test
-    void testSetCell() {
+    void testMoveTetrominoDown() {
         GameBoard board = new GameBoard(20, 10);
-        board.setCell(0, 0, 1);
-        assertEquals(1, board.getCell(0, 0), "La celda debería ser actualizada a 1.");
+        int initialY = board.getTetrominoY();
+
+        assertTrue(board.moveTetrominoDown(), "La pieza debería poder moverse hacia abajo.");
+        assertEquals(initialY + 1, board.getTetrominoY(), "La posición Y de la pieza debería incrementar.");
+
+        // Mover la pieza hasta el límite.
+        while (board.moveTetrominoDown()) {}
+
+        assertEquals(0, board.getTetrominoY(), "Una nueva pieza debería generarse en la parte superior tras colocar la actual.");
     }
 
     @Test
-    void testPlacePieceWithinBounds() {
+    void testMoveTetrominoLeftRight() {
         GameBoard board = new GameBoard(20, 10);
-        Tetromino piece = new Tetromino(Tetromino.TetrominoType.L);
+        int initialX = board.getTetrominoX();
 
-        // Colocar la pieza "L" en una posición válida.
-        assertTrue(board.placePiece(piece, 0, 0), "La pieza 'L' debería colocarse dentro de los límites.");
+        board.moveTetrominoLeft();
+        assertEquals(initialX - 1, board.getTetrominoX(), "La pieza debería moverse a la izquierda.");
+
+        board.moveTetrominoRight();
+        board.moveTetrominoRight();
+        assertEquals(initialX + 1, board.getTetrominoX(), "La pieza debería moverse a la derecha dos veces.");
     }
 
     @Test
-    void testPlacePieceOutOfBounds() {
+    void testRotateTetromino() {
         GameBoard board = new GameBoard(20, 10);
-        Tetromino piece = new Tetromino(Tetromino.TetrominoType.I);
+        Tetromino initialPiece = board.getCurrentTetromino();
+        int[][] initialShape = initialPiece.getShape();
 
-        // Intentar colocar la pieza "I" fuera del tablero.
-        assertFalse(board.placePiece(piece, 19, 8), "No debería ser posible colocar la pieza fuera de los límites.");
+        board.rotateTetromino();
+        assertNotEquals(initialShape, board.getCurrentTetromino().getShape(), "La forma de la pieza debería cambiar tras rotarla.");
     }
 
     @Test
-    void testPieceCollision() {
+    void testScoreAfterClearingLines() {
         GameBoard board = new GameBoard(20, 10);
-        Tetromino piece1 = new Tetromino(Tetromino.TetrominoType.O);
-        Tetromino piece2 = new Tetromino(Tetromino.TetrominoType.T);
 
-        // Colocar la primera pieza en el tablero.
-        board.placePiece(piece1, 18, 4);
-
-        // Intentar colocar la segunda pieza en la misma posición.
-        assertFalse(board.placePiece(piece2, 18, 4), "No debería ser posible colocar una pieza donde ya hay otra.");
-    }
-
-    @Test
-    void testClearCompleteLinesSingle() {
-        GameBoard board = new GameBoard(20, 10);
-        Tetromino piece = new Tetromino(Tetromino.TetrominoType.O);
-
-        // Llenar la última fila completamente con valores de celdas.
+        // Llena una fila completamente.
         for (int col = 0; col < board.getCols(); col++) {
             board.setCell(19, col, 1);
         }
 
-        // Verificar que la línea completa se limpia.
-        int linesCleared = board.clearCompleteLines();
-        assertEquals(1, linesCleared, "Debería limpiarse una línea completa.");
+        // Limpia las líneas y verifica el puntaje.
+        board.clearCompleteLines();
+        assertEquals(100, board.getScore(), "El puntaje debería aumentar en 100 al limpiar una línea.");
     }
 
     @Test
     void testClearMultipleCompleteLines() {
         GameBoard board = new GameBoard(20, 10);
-        Tetromino piece = new Tetromino(Tetromino.TetrominoType.I);
 
-        // Llenar las dos últimas filas.
+        // Llena las dos últimas filas.
         for (int row = 18; row <= 19; row++) {
             for (int col = 0; col < board.getCols(); col++) {
                 board.setCell(row, col, 1);
             }
         }
 
-        // Verificar que ambas líneas se limpian.
-        int linesCleared = board.clearCompleteLines();
-        assertEquals(2, linesCleared, "Deberían limpiarse dos líneas completas.");
+        board.clearCompleteLines();
+        assertEquals(200, board.getScore(), "El puntaje debería aumentar en 200 al limpiar dos líneas.");
     }
 
     @Test
-    void testPlaceRotatedPiece() {
+    void testSpawnNewTetromino() {
         GameBoard board = new GameBoard(20, 10);
-        Tetromino piece = new Tetromino(Tetromino.TetrominoType.J);
+        Tetromino firstPiece = board.getCurrentTetromino();
 
-        // Rotar la pieza antes de colocarla.
-        piece.rotate();
+        // Mover la pieza hacia abajo hasta que se coloque.
+        while (board.moveTetrominoDown()) {}
 
-        // Verificar que se puede colocar la pieza rotada.
-        assertTrue(board.placePiece(piece, 0, 0), "Debería ser posible colocar la pieza 'J' rotada.");
+        Tetromino newPiece = board.getCurrentTetromino();
+        assertNotSame(firstPiece, newPiece, "Debería generarse una nueva pieza tras colocar la actual.");
     }
 
     @Test
-    void testCollisionAfterRotation() {
+    void testBoundaryMovements() {
         GameBoard board = new GameBoard(20, 10);
-        Tetromino piece1 = new Tetromino(Tetromino.TetrominoType.O);
-        Tetromino piece2 = new Tetromino(Tetromino.TetrominoType.T);
 
-        // Colocar la primera pieza en el tablero.
-        board.placePiece(piece1, 18, 4);
+        // Intentar mover la pieza fuera de los límites laterales.
+        for (int i = 0; i < 15; i++) {
+            board.moveTetrominoLeft();
+        }
+        assertEquals(0, board.getTetrominoX(), "La pieza no debería salir del tablero por la izquierda.");
 
-        // Rotar la segunda pieza y tratar de colocarla en conflicto con la primera.
-        piece2.rotate();
-        assertFalse(board.placePiece(piece2, 18, 4), "No debería ser posible colocar una pieza rotada en conflicto con otra.");
+        for (int i = 0; i < 15; i++) {
+            board.moveTetrominoRight();
+        }
+        assertEquals(board.getCols() - board.getCurrentTetromino().getShape()[0].length,
+                board.getTetrominoX(),
+                "La pieza no debería salir del tablero por la derecha.");
+    }
+
+    @Test
+    void testComplexCollisions() {
+        GameBoard board = new GameBoard(20, 10);
+
+        // Coloca la primera pieza en el fondo.
+        while (board.moveTetrominoDown()) {}
+
+        // La nueva pieza debería moverse hacia abajo si tiene espacio.
+        assertTrue(board.moveTetrominoDown(), "La nueva pieza debería moverse hacia abajo si tiene espacio.");
+    }
+
+    @Test
+    void testBoardStateAfterPlacement() {
+        GameBoard board = new GameBoard(20, 10);
+
+        // Dejar caer una pieza completamente y guardar su referencia antes de que se genere una nueva.
+        Tetromino piece = board.getCurrentTetromino();
+
+        Tetromino placedPiece = null; // Referencia a la pieza que se colocará.
+        int placedX = 0, placedY = 0; // Posiciones de la pieza que se colocará.
+
+        // Dejar caer una pieza completamente y capturar su estado antes de generar una nueva.
+        while (true) {
+            placedPiece = board.getCurrentTetromino(); // Captura la pieza actual.
+            placedX = board.getTetrominoX(); // Captura su posición X.
+            placedY = board.getTetrominoY(); // Captura su posición Y.
+
+            if (!board.moveTetrominoDown()) {
+                // La pieza se ha colocado en el tablero; salimos del bucle.
+                break;
+            }
+        }
+
+        // Ahora `placedPiece` tiene la referencia de la pieza que fue colocada.
+        int[][] shape = placedPiece.getShape();
+        int pieceX = placedX;
+        int pieceY = placedY; // Ajusta la posición Y inicial.
+
+        System.out.print("Coordenadas Tetromino: (" + pieceX + ", " + pieceY + ")");
+
+
+        // Diagnóstico: Imprimir el tablero
+        System.out.println("Tablero después de colocar la pieza:");
+        for (int i = 0; i < board.getRows(); i++) {
+            for (int j = 0; j < board.getCols(); j++) {
+                System.out.print(board.getCell(i, j) + " ");
+            }
+            System.out.println();
+        }
+
+        for (int row = 0; row < shape.length; row++) {
+            for (int col = 0; col < shape[row].length; col++) {
+                if (shape[row][col] == 1) { // Parte de la pieza
+                    int boardY = pieceY + row; // Coordenada Y en el tablero
+                    int boardX = pieceX + col; // Coordenada X en el tablero
+
+                    // Validar que las coordenadas están dentro del rango del tablero.
+                    if (boardY >= 0 && boardY < board.getRows() && boardX >= 0 && boardX < board.getCols()) {
+                        assertEquals(piece.getType().ordinal() + 1,
+                                board.getCell(boardY, boardX),
+                                "El tablero debería contener los valores de la pieza colocada en (" + boardY + ", " + boardX + ")");
+                    } else {
+                        fail("Coordenadas fuera de rango: (" + boardY + ", " + boardX + ")");
+                    }
+                }
+            }
+        }
     }
 
 }
