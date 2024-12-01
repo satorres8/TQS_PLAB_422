@@ -69,4 +69,71 @@ class GameControllerTest {
         // Aquí no verificamos directamente el temporizador, pero asumimos que se detuvo correctamente.
         assertEquals(gameBoard.getTetrominoX(), gameBoard.getTetrominoX(), "La pieza no debe moverse después de soltar la tecla.");
     }
+
+    @Test
+    void testBoundaryLeftMovement() {
+        // Colocar la tetromino en el borde izquierdo
+        while (gameBoard.getTetrominoX() > 0) {
+            gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_LEFT, 'A'));
+        }
+        int initialX = gameBoard.getTetrominoX();
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_LEFT, 'A'));
+        assertEquals(initialX, gameBoard.getTetrominoX(), "La tetromino se movió fuera del límite izquierdo.");
+    }
+
+    @Test
+    void testBoundaryRightMovement() {
+        // Colocar la tetromino en el borde derecho
+        while (gameBoard.getTetrominoX() < gameBoard.getCols() - gameBoard.getCurrentTetromino().getShape()[0].length) {
+            gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_RIGHT, 'D'));
+        }
+        int initialX = gameBoard.getTetrominoX();
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_RIGHT, 'D'));
+        assertEquals(initialX, gameBoard.getTetrominoX(), "La tetromino se movió fuera del límite derecho.");
+    }
+
+    @Test
+    void testContinuousDownMovement() throws InterruptedException {
+        int initialY = gameBoard.getTetrominoY();
+        KeyEvent downKey = new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_DOWN, 'S');
+        gameController.keyPressed(downKey);
+
+        // Esperar para verificar movimiento continuo
+        Thread.sleep(300);
+        assertTrue(gameBoard.getTetrominoY() > initialY, "La tetromino no se movió continuamente hacia abajo.");
+    }
+
+    @Test
+    void testPairwiseKeyCombinations() {
+        int initialX = gameBoard.getTetrominoX();
+        int initialY = gameBoard.getTetrominoY();
+
+        // Izquierda y abajo
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_LEFT, 'A'));
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_DOWN, 'S'));
+
+        assertEquals(initialX - 1, gameBoard.getTetrominoX(), "La tetromino no se movió a la izquierda correctamente.");
+        assertEquals(initialY + 1, gameBoard.getTetrominoY(), "La tetromino no se movió hacia abajo correctamente.");
+
+        // Derecha y rotar
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_RIGHT, 'D'));
+        int[][] initialShape = gameBoard.getCurrentTetromino().getShape();
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_UP, 'W'));
+        int[][] rotatedShape = gameBoard.getCurrentTetromino().getShape();
+
+        assertEquals(initialX, gameBoard.getTetrominoX(), "La tetromino no se movió a la derecha correctamente.");
+        assertNotEquals(initialShape, rotatedShape, "La tetromino no se rotó correctamente.");
+    }
+
+    @Test
+    void testRapidKeyPresses() {
+        int initialX = gameBoard.getTetrominoX();
+
+        // Simular varias pulsaciones rápidas de teclas
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_LEFT, 'A'));
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_RIGHT, 'D'));
+        gameController.keyPressed(new KeyEvent(dummyComponent, KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_LEFT, 'A'));
+
+        assertTrue(gameBoard.getTetrominoX() != initialX, "La tetromino no respondió a las pulsaciones rápidas de teclas.");
+    }
 }
