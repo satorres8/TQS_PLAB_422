@@ -243,7 +243,7 @@ public class TetrominoTest {
         Tetromino tetromino = new Tetromino(Tetromino.TetrominoType.I) {
             {
                 // Sobrescribir la forma con una matriz vacía
-                this.shape = new int[][]{};
+                this.setShape(new int[][]{});
             }
         };
         assertEquals(0, tetromino.getOccupiedCells(), "El número de celdas ocupadas debería ser 0 para una matriz vacía.");
@@ -255,10 +255,10 @@ public class TetrominoTest {
         Tetromino tetromino = new Tetromino(Tetromino.TetrominoType.I) {
             {
                 // Sobrescribir la forma con una matriz personalizada
-                this.shape = new int[][]{
+                this.setShape(new int[][]{
                         {1, 0},
                         {0, 1}
-                };
+                });
             }
         };
         assertEquals(2, tetromino.getOccupiedCells(), "El número de celdas ocupadas debería ser 2.");
