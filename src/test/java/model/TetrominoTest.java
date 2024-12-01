@@ -232,4 +232,35 @@ public class TetrominoTest {
             new Tetromino(Tetromino.TetrominoType.S);
         }, "No se esperaba una excepción con un tipo válido.");
     }
+
+    // Probar el bucle anidado en getOccupiedCells() con diferentes tamaños y contenidos de matriz.
+    // Cubrir ambas ramas de la condición if (cell == 1).
+    // Cobertura de Bucles y Condiciones
+
+    @Test
+    public void testGetOccupiedCellsEmptyShape() {
+        // Caso con matriz vacía
+        Tetromino tetromino = new Tetromino(Tetromino.TetrominoType.I) {
+            {
+                // Sobrescribir la forma con una matriz vacía
+                this.shape = new int[][]{};
+            }
+        };
+        assertEquals(0, tetromino.getOccupiedCells(), "El número de celdas ocupadas debería ser 0 para una matriz vacía.");
+    }
+
+    @Test
+    public void testGetOccupiedCellsMixedShape() {
+        // Caso con matriz que contiene celdas ocupadas y vacías
+        Tetromino tetromino = new Tetromino(Tetromino.TetrominoType.I) {
+            {
+                // Sobrescribir la forma con una matriz personalizada
+                this.shape = new int[][]{
+                        {1, 0},
+                        {0, 1}
+                };
+            }
+        };
+        assertEquals(2, tetromino.getOccupiedCells(), "El número de celdas ocupadas debería ser 2.");
+    }
 }
