@@ -162,6 +162,18 @@ public class GameBoard {
         return tetrominoY;
     }
 
+    public void setCurrentTetromino(Tetromino tetromino) {
+        this.currentTetromino = tetromino;
+    }
+
+    public void setTetrominoX(int x) {
+        this.tetrominoX = x;
+    }
+
+    public void setTetrominoY(int y) {
+        this.tetrominoY = y;
+    }
+
     /**
      * Mueve la pieza actual hacia abajo.
      *

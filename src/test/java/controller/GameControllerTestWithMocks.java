@@ -8,14 +8,16 @@ import java.awt.event.KeyEvent;
 
 import static org.mockito.Mockito.*;
 
+/**
+ * Pruebas para la clase GameController utilizando MockObjects.
+ */
 class GameControllerTestWithMocks {
 
     /**
-     * Prueba que verifica que el GameController invoca el método moveTetrominoLeft() en GameBoard al presionar la
-     * tecla izquierda.
-     *
-     * Se utiliza un mock de GameBoard y un mock del repaintCallback para aislar el GameController.
-     * Esto permite verificar que el GameController interactúa correctamente con sus dependencias sin depender de su implementación real.
+     * TIPO DE PRUEBA: Caja Negra con Mocks (Mockito)
+     * CRITERIO EVALUADO: Interacción con dependencias y aislamiento
+     * DESCRIPCIÓN: Verifica que el GameController invoca el método moveTetrominoLeft() en GameBoard al
+     * presionar la tecla izquierda.
      */
     @Test
     void testMoveTetrominoLeft_MockGameBoard() {
@@ -32,7 +34,8 @@ class GameControllerTestWithMocks {
         GameController gameController = new GameController(mockGameBoard, mockRepaintCallback);
 
         // Simular la pulsación de la tecla izquierda
-        KeyEvent leftKey = new KeyEvent(new JPanel(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0, KeyEvent.VK_LEFT, 'A');
+        KeyEvent leftKey = new KeyEvent(new JPanel(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0,
+                KeyEvent.VK_LEFT, 'A');
         gameController.keyPressed(leftKey);
 
         // Verificar que se llamó al método moveTetrominoLeft en el GameBoard
@@ -43,13 +46,10 @@ class GameControllerTestWithMocks {
     }
 
     /**
-     * Prueba que verifica que el GameController no realiza acciones cuando se presionan teclas inválidas.
-     *
-     * Se utiliza un mock de GameBoard y se simula la pulsación de una tecla no asignada a ninguna acción.
-     * Se verifica que no se invoca ningún método en GameBoard, asegurando que el GameController maneja correctamente
-     * entradas inválidas.
+     * TIPO DE PRUEBA: Caja Negra con Mocks (Mockito)
+     * CRITERIO EVALUADO: Manejo de entradas inválidas y robustez
+     * DESCRIPCIÓN: Verifica que el GameController no realiza acciones cuando se presionan teclas inválidas.
      */
-
     @Test
     void testInvalidKeyPress() {
         GameBoard mockGameBoard = mock(GameBoard.class);
@@ -63,5 +63,4 @@ class GameControllerTestWithMocks {
         // Verificar que no se llamó a ningún método del GameBoard
         verifyNoInteractions(mockGameBoard);
     }
-
 }
