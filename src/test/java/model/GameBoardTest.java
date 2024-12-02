@@ -97,18 +97,23 @@ class GameBoardTest {
      */
     @Test
     void testCanMoveCollision() {
+        // Crear el tablero con dimensiones 20x10
         GameBoard board = new GameBoard(20, 10);
-        board.setCell(0, 0, 1); // Ocupamos la celda (0, 0)
 
-        // Definimos una forma que ocupa la posición (0, 0)
-        int[][] shape = {
-                {1}
+        // Marcar una celda como ocupada
+        board.setCell(0, 0, 1);
+
+        // Verificar con la forma de un Tetromino en la posición
+        int[][] shape = new int[][]{
+                {1} // Una única celda ocupada
         };
 
-        // Intentamos mover la forma a la posición (0, 0)
-        assertFalse(board.canMove(0, 0, shape), "Se esperaba que canMove devolviera false debido a una colisión en (0, 0).");
-    }
+        // Intentar mover el Tetromino a la celda ocupada
+        boolean canMove = board.canMove(0, 0, shape);
 
+        // Verificar que el método detecta correctamente la colisión
+        assertFalse(canMove, "El método canMove no detectó la colisión con una celda ocupada.");
+    }
 
     /**
      * TIPO DE PRUEBA: Caja Blanca
@@ -526,10 +531,10 @@ class GameBoardTest {
         // Mockear el método canMove para que siempre devuelva false
         doReturn(false).when(spyBoard).canMove(anyInt(), anyInt(), any(int[][].class));
 
-        // Intentar mover la tetromino hacia abajo y esperar la excepción
-        assertThrows(IllegalStateException.class, () -> {
+        // Intentar mover el Tetromino hacia abajo y esperar la excepción GameOverException
+        assertThrows(GameOverException.class, () -> {
             spyBoard.moveTetrominoDown();
-        }, "Se esperaba una IllegalStateException debido a que el Tetromino no puede moverse y no se puede " +
+        }, "Se esperaba una GameOverException debido a que el Tetromino no puede moverse y no se puede " +
                 "generar una nueva pieza.");
     }
 }

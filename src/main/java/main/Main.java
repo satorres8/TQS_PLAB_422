@@ -2,6 +2,7 @@ package main;
 
 import controller.GameController;
 import model.GameBoard;
+import model.GameOverException;
 import view.GameView;
 
 import javax.swing.*;
@@ -26,8 +27,15 @@ public class Main {
 
         // Bucle principal del juego (caída automática)
         new Timer(500, e -> {
-            gameBoard.moveTetrominoDown();
-            gameView.repaint();
+            try {
+                gameBoard.moveTetrominoDown();
+                gameView.repaint();
+            } catch (GameOverException ex) {
+                ((Timer) e.getSource()).stop(); // Detener el temporizador
+                System.out.println(ex.getMessage());
+            }
         }).start();
+
+
     }
 }

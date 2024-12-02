@@ -16,6 +16,7 @@ public class GameBoard {
     private int tetrominoX;
     private int tetrominoY;
     private int score = 0; // Sistema de puntuación
+    private boolean gameOver = false;
 
     /**
      * Constructor para inicializar el tablero.
@@ -57,6 +58,10 @@ public class GameBoard {
 
     public int getScore() {
         return score;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     /**
@@ -109,46 +114,29 @@ public class GameBoard {
      * Genera una nueva pieza Tetromino en la posición inicial.
      *
      * **Precondiciones:**
-     * - El tablero está en un estado válido.
+     * - El juego no debe haber terminado.
      *
      * **Postcondiciones:**
-     * - `currentTetromino` no es `null`.
-     * - La nueva pieza tiene espacio para colocarse en la posición inicial.
-     * - El tablero sigue siendo válido.
+     * - `currentTetromino` no es `null` salvo que el juego haya terminado.
+     * - Si no hay espacio para la nueva pieza, se lanza `GameOverException`.
      *
-     * @throws IllegalStateException si no hay espacio para la nueva pieza (fin del juego).
+     * @throws GameOverException si no puede generarse una nueva pieza debido a colisiones.
      */
     public void spawnTetromino() {
-        // Precondición: El tablero debe estar en un estado válido.
-        if (!allCellsAreValid()) {
-            throw new IllegalStateException("Precondición fallida: El tablero tiene valores inválidos.");
+        if (gameOver) {
+            throw new GameOverException("El juego ha terminado: no se pueden generar nuevas piezas.");
         }
 
-        // Genera una nueva pieza aleatoria.
         currentTetromino = new Tetromino(Tetromino.TetrominoType.values()[(int) (Math.random() * 7)]);
         tetrominoX = cols / 2 - currentTetromino.getShape()[0].length / 2;
         tetrominoY = 0;
 
-        // Postcondición: La pieza generada no puede ser null.
-        if (currentTetromino == null) {
-            throw new IllegalStateException("Postcondición fallida: La pieza actual no puede ser null.");
-        }
-
-        // Verifica si la nueva pieza puede colocarse en la posición inicial.
         if (!canMove(tetrominoX, tetrominoY)) {
-            throw new IllegalStateException("No se puede generar una nueva pieza: colisión detectada. Fin del juego.");
-        }
-
-        // Postcondición: Después de generar la nueva pieza, debe haber espacio para moverla.
-        if (!canMove(tetrominoX, tetrominoY)) {
-            throw new IllegalStateException("Postcondición fallida: La nueva pieza no tiene espacio para moverse.");
-        }
-
-        // Postcondición: El tablero debe seguir siendo válido.
-        if (!allCellsAreValid()) {
-            throw new IllegalStateException("Postcondición fallida: El tablero tiene valores inválidos después de generar la nueva pieza.");
+            gameOver = true;
+            throw new GameOverException("El juego ha terminado: no hay espacio para nuevas piezas.");
         }
     }
+
 
     public Tetromino getCurrentTetromino() {
         return currentTetromino;
@@ -177,12 +165,21 @@ public class GameBoard {
     /**
      * Mueve la pieza actual hacia abajo.
      *
+     * **Precondiciones:**
+     * - El juego no debe haber terminado.
+     *
      * **Postcondiciones:**
      * - Si la pieza no puede moverse, se coloca en el tablero y se genera una nueva.
+     * - Si no puede generarse una nueva pieza, se lanza `GameOverException`.
      *
      * @return `true` si la pieza se movió; `false` si se colocó en el tablero.
+     * @throws GameOverException si el juego ha terminado.
      */
     public boolean moveTetrominoDown() {
+        if (gameOver) {
+            throw new GameOverException("El juego ha terminado: no se pueden mover piezas.");
+        }
+
         if (!canMove(tetrominoX, tetrominoY + 1)) {
             placeTetromino();
             spawnTetromino();
@@ -192,19 +189,71 @@ public class GameBoard {
         return true;
     }
 
+
+
+    /**
+     * Mueve la pieza actual hacia la izquierda.
+     *
+     * **Precondiciones:**
+     * - El juego no debe haber terminado.
+     *
+     * **Postcondiciones:**
+     * - Si la pieza puede moverse a la izquierda, su posición X se decrementa.
+     * - Si el juego ha terminado, se lanza `GameOverException`.
+     *
+     * @throws GameOverException si el juego ha terminado.
+     */
     public void moveTetrominoLeft() {
+        if (gameOver) {
+            throw new GameOverException("El juego ha terminado: no se pueden mover piezas.");
+        }
         if (canMove(tetrominoX - 1, tetrominoY)) {
             tetrominoX--;
         }
     }
 
+
+
+    /**
+     * Mueve la pieza actual hacia la derecha.
+     *
+     * **Precondiciones:**
+     * - El juego no debe haber terminado.
+     *
+     * **Postcondiciones:**
+     * - Si la pieza puede moverse a la derecha, su posición X se incrementa.
+     * - Si el juego ha terminado, se lanza `GameOverException`.
+     *
+     * @throws GameOverException si el juego ha terminado.
+     */
     public void moveTetrominoRight() {
+        if (gameOver) {
+            throw new GameOverException("El juego ha terminado: no se pueden mover piezas.");
+        }
         if (canMove(tetrominoX + 1, tetrominoY)) {
             tetrominoX++;
         }
     }
 
+
+
+    /**
+     * Rota la pieza actual 90 grados en sentido horario.
+     *
+     * **Precondiciones:**
+     * - El juego no debe haber terminado.
+     *
+     * **Postcondiciones:**
+     * - Si la rotación es válida, la forma de la pieza se actualiza.
+     * - Si el juego ha terminado, se lanza `GameOverException`.
+     *
+     * @throws GameOverException si el juego ha terminado.
+     */
     public void rotateTetromino() {
+        if (gameOver) {
+            throw new GameOverException("El juego ha terminado: no se pueden rotar piezas.");
+        }
+
         Tetromino rotatedTetromino = new Tetromino(currentTetromino.getType());
         rotatedTetromino.setShape(currentTetromino.getShape());
         rotatedTetromino.rotate();
@@ -213,6 +262,8 @@ public class GameBoard {
             currentTetromino.rotate();
         }
     }
+
+
 
     /**
      * Coloca la pieza actual en el tablero.
@@ -295,14 +346,6 @@ public class GameBoard {
         return canMove(newX, newY, currentTetromino.getShape());
     }
 
-    /**
-     * Verifica si una forma específica puede ubicarse en una posición dada.
-     *
-     * @param newX  Nueva posición X.
-     * @param newY  Nueva posición Y.
-     * @param shape Forma a verificar.
-     * @return `true` si puede moverse; `false` de lo contrario.
-     */
     public boolean canMove(int newX, int newY, int[][] shape) {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
@@ -310,9 +353,12 @@ public class GameBoard {
                     int boardX = newX + col;
                     int boardY = newY + row;
 
+                    // Verificar límites del tablero
                     if (boardX < 0 || boardX >= cols || boardY >= rows) {
                         return false;
                     }
+
+                    // Verificar colisión con celdas ocupadas
                     if (boardY >= 0 && board[boardY][boardX] != 0) {
                         return false;
                     }
@@ -321,6 +367,7 @@ public class GameBoard {
         }
         return true;
     }
+
 
     /**
      * Verifica si todas las celdas del tablero contienen valores válidos.

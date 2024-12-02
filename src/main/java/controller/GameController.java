@@ -1,6 +1,7 @@
 package controller;
 
 import model.GameBoard;
+import model.GameOverException;
 
 import javax.swing.Timer;
 import java.awt.event.KeyEvent;
@@ -157,27 +158,23 @@ public class GameController implements KeyListener {
      * @throws IllegalArgumentException si `keyCode` no es una tecla válida.
      */
     private void executeKeyAction(int keyCode) {
-        if (!isValidKey(keyCode)) {
-            throw new IllegalArgumentException("La tecla debe ser válida para ejecutar la acción.");
-        }
-
-        switch (keyCode) {
-            case KeyEvent.VK_LEFT -> gameBoard.moveTetrominoLeft();
-            case KeyEvent.VK_RIGHT -> gameBoard.moveTetrominoRight();
-            case KeyEvent.VK_DOWN -> gameBoard.moveTetrominoDown();
-            case KeyEvent.VK_UP -> gameBoard.rotateTetromino();
-            default -> {
-                // No debería ocurrir, ya que se verifica previamente
-                throw new IllegalStateException("Tecla no reconocida en executeKeyAction.");
+        try {
+            if (gameBoard.isGameOver()) {
+                throw new GameOverException("El juego ha terminado: no se pueden realizar acciones.");
             }
-        }
-        repaintCallback.run();
 
-        // Postcondición: El estado del tablero debe ser válido después de cada acción
-        if (!gameBoard.allCellsAreValid()) {
-            throw new IllegalStateException("Postcondición fallida: El tablero contiene celdas inválidas después de ejecutar la acción.");
+            switch (keyCode) {
+                case KeyEvent.VK_LEFT -> gameBoard.moveTetrominoLeft();
+                case KeyEvent.VK_RIGHT -> gameBoard.moveTetrominoRight();
+                case KeyEvent.VK_DOWN -> gameBoard.moveTetrominoDown();
+                case KeyEvent.VK_UP -> gameBoard.rotateTetromino();
+            }
+            repaintCallback.run();
+        } catch (GameOverException ex) {
+            System.out.println(ex.getMessage());
         }
     }
+
 
     /**
      * Verifica si una tecla es válida para este controlador.
