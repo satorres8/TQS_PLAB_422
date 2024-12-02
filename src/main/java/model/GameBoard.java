@@ -346,14 +346,6 @@ public class GameBoard {
         return canMove(newX, newY, currentTetromino.getShape());
     }
 
-    /**
-     * Verifica si una forma específica puede ubicarse en una posición dada.
-     *
-     * @param newX  Nueva posición X.
-     * @param newY  Nueva posición Y.
-     * @param shape Forma a verificar.
-     * @return `true` si puede moverse; `false` de lo contrario.
-     */
     public boolean canMove(int newX, int newY, int[][] shape) {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
@@ -361,9 +353,12 @@ public class GameBoard {
                     int boardX = newX + col;
                     int boardY = newY + row;
 
+                    // Verificar límites del tablero
                     if (boardX < 0 || boardX >= cols || boardY >= rows) {
                         return false;
                     }
+
+                    // Verificar colisión con celdas ocupadas
                     if (boardY >= 0 && board[boardY][boardX] != 0) {
                         return false;
                     }
@@ -372,6 +367,7 @@ public class GameBoard {
         }
         return true;
     }
+
 
     /**
      * Verifica si todas las celdas del tablero contienen valores válidos.
