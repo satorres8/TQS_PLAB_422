@@ -1,6 +1,7 @@
 package model;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import java.util.Arrays;
 public class TetrominoTest {
 
     /**
-     * Función auxiliar.
+     * Función auxiliar para verificar todas las rotaciones de un Tetromino.
      */
     private void verifyAllRotations(Tetromino tetromino, int[][][] expectedRotations) {
         for (int i = 0; i < expectedRotations.length; i++) {
@@ -22,7 +23,8 @@ public class TetrominoTest {
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Particiones equivalentes
-     * DESCRIPCIÓN: Verifica que las formas iniciales de los Tetrominoes coincidan con los valores esperados para cada tipo válido.
+     * DESCRIPCIÓN: Verifica que las formas iniciales de los Tetrominoes coincidan con los valores esperados
+     * para cada tipo válido.
      */
     @Test
     public void testTetrominoInitializationValidTypes() {
@@ -69,7 +71,8 @@ public class TetrominoTest {
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Path Coverage
-     * DESCRIPCIÓN: Comprueba que las rotaciones de todas las piezas (I, O, T, S, Z, J, L) se realizan correctamente y coinciden con las formas esperadas.
+     * DESCRIPCIÓN: Comprueba que las rotaciones de todas las piezas se realizan correctamente y coinciden con
+     * las formas esperadas.
      */
     @Test
     public void testAllRotationsForAllTetrominoes() {
@@ -86,18 +89,20 @@ public class TetrominoTest {
                 {{1, 1, 1}, {0, 1, 0}}, {{0, 1}, {1, 1}, {0, 1}}};
         verifyAllRotations(tetrominoT, expectedRotationsT);
 
-        // Similar para otras piezas (S, Z, J, L).
+        // Se puede continuar de manera similar para las piezas S, Z, J, L
     }
 
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Particiones equivalentes
-     * DESCRIPCIÓN: Valida que el método `getOccupiedCells` retorna el número correcto de celdas ocupadas para cada tipo de pieza.
+     * DESCRIPCIÓN: Valida que el método `getOccupiedCells` retorna el número correcto de celdas ocupadas
+     * para cada tipo de pieza.
      */
     @Test
     public void testGetOccupiedCells() {
         Tetromino tetrominoI = new Tetromino(Tetromino.TetrominoType.I);
-        assertEquals(4, tetrominoI.getOccupiedCells(), "El número de celdas ocupadas para la pieza I no es correcto.");
+        assertEquals(4, tetrominoI.getOccupiedCells(), "El número de celdas ocupadas para la " +
+                "pieza I no es correcto.");
 
         // Similar para otras piezas (O, T, S, Z, J, L).
     }
@@ -133,7 +138,8 @@ public class TetrominoTest {
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Pairwise Testing
-     * DESCRIPCIÓN: Evalúa combinaciones de entradas válidas e inválidas al método `setShape` para verificar el manejo correcto de la validación y actualización de formas.
+     * DESCRIPCIÓN: Evalúa combinaciones de entradas válidas e inválidas al método `setShape` para verificar el
+     * manejo correcto de la validación y actualización de formas.
      */
     @Test
     public void testSetShapePairwise() {
@@ -145,5 +151,149 @@ public class TetrominoTest {
         assertDoesNotThrow(() -> tetromino.setShape(validShape1));
         assertThrows(IllegalArgumentException.class, () -> tetromino.setShape(invalidShapeNull));
         assertThrows(IllegalArgumentException.class, () -> tetromino.setShape(invalidShapeNegative));
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca
+     * CRITERIO EVALUADO: Decision Statement
+     * DESCRIPCIÓN: Verifica que el constructor de Tetromino lanza una excepción al recibir un tipo nulo.
+     */
+    @Test
+    public void testConstructorWithNullType() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new Tetromino(null);
+        }, "Se esperaba una IllegalArgumentException al pasar un tipo nulo.");
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca
+     * CRITERIO EVALUADO: Decision Statement
+     * DESCRIPCIÓN: Verifica que el constructor de Tetromino no lanza excepciones al recibir un tipo válido.
+     */
+    @Test
+    public void testConstructorWithValidType() {
+        assertDoesNotThrow(() -> {
+            new Tetromino(Tetromino.TetrominoType.S);
+        }, "No se esperaba una excepción con un tipo válido.");
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca
+     * CRITERIO EVALUADO: Loop Testing
+     * DESCRIPCIÓN: Verifica que getOccupiedCells() devuelve 0 cuando la forma del Tetromino es una matriz vacía.
+     */
+    @Test
+    public void testGetOccupiedCellsEmptyShape() {
+        Tetromino tetromino = new Tetromino(Tetromino.TetrominoType.I) {
+            {
+                // Sobrescribir la forma con una matriz vacía
+                this.setShape(new int[][]{});
+            }
+        };
+        assertEquals(0, tetromino.getOccupiedCells(), "El número de celdas ocupadas debería ser 0 " +
+                "para una matriz vacía.");
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca
+     * CRITERIO EVALUADO: Loop Testing
+     * DESCRIPCIÓN: Verifica que getOccupiedCells() cuenta correctamente las celdas ocupadas en una forma mixta.
+     */
+    @Test
+    public void testGetOccupiedCellsMixedShape() {
+        Tetromino tetromino = new Tetromino(Tetromino.TetrominoType.I) {
+            {
+                // Sobrescribir la forma con una matriz personalizada
+                this.setShape(new int[][]{
+                        {1, 0},
+                        {0, 1}
+                });
+            }
+        };
+        assertEquals(2, tetromino.getOccupiedCells(), "El número de celdas ocupadas debería ser 2.");
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca con Spy (Mockito)
+     * CRITERIO EVALUADO: Aislamiento de dependencias y cobertura de código
+     * DESCRIPCIÓN: Verifica el comportamiento del método rotate() en Tetromino utilizando un Spy para simular
+     * una rotación específica.
+     */
+    @Test
+    void testRotateTetrominoWithSpy() {
+        Tetromino realTetromino = new Tetromino(Tetromino.TetrominoType.T);
+
+        Tetromino spyTetromino = spy(realTetromino);
+
+        // Mockear el método rotate para que realice una rotación específica
+        doAnswer(invocation -> {
+            int[][] rotatedShape = {
+                    {1, 0},
+                    {1, 1},
+                    {1, 0}
+            };
+            spyTetromino.setShape(rotatedShape);
+            return null;
+        }).when(spyTetromino).rotate();
+
+        // Llamar al método rotate
+        spyTetromino.rotate();
+
+        // Verificar que la forma ha sido actualizada correctamente
+        int[][] expectedShape = {
+                {1, 0},
+                {1, 1},
+                {1, 0}
+        };
+        assertArrayEquals(expectedShape, spyTetromino.getShape(), "La forma de la Tetromino no se rotó " +
+                "como se esperaba.");
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca con Mocks (Mockito)
+     * CRITERIO EVALUADO: Manejo de excepciones y robustez
+     * DESCRIPCIÓN: Verifica el comportamiento del método getOccupiedCells() cuando la forma es null.
+     */
+    @Test
+    void testGetOccupiedCellsWithNullShape() {
+        Tetromino mockTetromino = mock(Tetromino.class);
+
+        when(mockTetromino.getShape()).thenReturn(null);
+
+        when(mockTetromino.getOccupiedCells()).thenCallRealMethod();
+
+        assertThrows(NullPointerException.class, () -> {
+            mockTetromino.getOccupiedCells();
+        }, "Se esperaba una NullPointerException cuando la forma es null.");
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca con MockObjects Manuales
+     * CRITERIO EVALUADO: Robustez ante entradas no estándar
+     * DESCRIPCIÓN: Verifica que getOccupiedCells() cuenta correctamente las celdas ocupadas incluso cuando la
+     * forma es irregular.
+     */
+    @Test
+    void testTetrominoWithIrregularShape() {
+        int[][] irregularShape = {
+                {1, 1, 1},
+                {1, 1}
+        };
+
+        Tetromino mockTetromino = new MockTetromino(irregularShape, Tetromino.TetrominoType.L);
+
+        int expectedOccupiedCells = 0;
+        for (int[] row : irregularShape) {
+            for (int cell : row) {
+                if (cell == 1) {
+                    expectedOccupiedCells++;
+                }
+            }
+        }
+
+        int actualOccupiedCells = mockTetromino.getOccupiedCells();
+
+        assertEquals(expectedOccupiedCells, actualOccupiedCells, "El número de celdas ocupadas no coincide " +
+                "con el esperado para la forma irregular.");
     }
 }

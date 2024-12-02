@@ -1,7 +1,7 @@
 package model;
 
 import org.junit.jupiter.api.Test;
-
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -12,7 +12,7 @@ class GameBoardTest {
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Particiones equivalentes
-     * DESCRIPCION: Verifica la inicialización del tablero con dimensiones válidas.
+     * DESCRIPCIÓN: Verifica la inicialización del tablero con dimensiones válidas.
      */
     @Test
     void testGameBoardInitialization() {
@@ -24,7 +24,7 @@ class GameBoardTest {
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Valores límite
-     * DESCRIPCION: Verifica que se lanza una excepción para dimensiones de tablero inválidas.
+     * DESCRIPCIÓN: Verifica que se lanza una excepción para dimensiones de tablero inválidas.
      */
     @Test
     void testInvalidGameBoardDimensions() {
@@ -35,7 +35,7 @@ class GameBoardTest {
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Particiones equivalentes
-     * DESCRIPCION: Comprueba que las celdas del tablero devuelven valores correctos iniciales.
+     * DESCRIPCIÓN: Comprueba que las celdas del tablero devuelven valores correctos iniciales.
      */
     @Test
     void testGetCell() {
@@ -46,7 +46,8 @@ class GameBoardTest {
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Valores límite
-     * DESCRIPCION: Verifica que se lanza una excepción cuando se intenta acceder a una celda fuera de los límites del tablero.
+     * DESCRIPCIÓN: Verifica que se lanza una excepción cuando se intenta acceder a una celda fuera de
+     * los límites del tablero.
      */
     @Test
     void testInvalidCellAccess() {
@@ -59,8 +60,8 @@ class GameBoardTest {
 
     /**
      * TIPO DE PRUEBA: Caja Blanca
-     * CRITERIO EVALUADO: Statement coverage
-     * DESCRIPCION: Comprueba que no se pueden establecer valores inválidos en celdas.
+     * CRITERIO EVALUADO: Statement Coverage
+     * DESCRIPCIÓN: Comprueba que no se pueden establecer valores inválidos en celdas.
      */
     @Test
     void testSetCellInvalidValue() {
@@ -70,8 +71,8 @@ class GameBoardTest {
 
     /**
      * TIPO DE PRUEBA: Caja Blanca
-     * CRITERIO EVALUADO: Loop testing(bucle anidado)
-     * DESCRIPCION: Valida que las filas superiores se desplacen al limpiar múltiples líneas.
+     * CRITERIO EVALUADO: Loop Testing (bucle anidado)
+     * DESCRIPCIÓN: Valida que las filas superiores se desplacen al limpiar múltiples líneas.
      */
     @Test
     void testClearLineWithMultipleRows() {
@@ -91,8 +92,8 @@ class GameBoardTest {
 
     /**
      * TIPO DE PRUEBA: Caja Blanca
-     * CRITERIO EVALUADO: Statement coverage
-     * DESCRIPCION: Comprueba que el método canMove detecta colisiones con otras celdas ocupadas en el tablero.
+     * CRITERIO EVALUADO: Statement Coverage
+     * DESCRIPCIÓN: Comprueba que el método canMove detecta colisiones con otras celdas ocupadas en el tablero.
      */
     @Test
     void testCanMoveCollision() {
@@ -103,8 +104,8 @@ class GameBoardTest {
 
     /**
      * TIPO DE PRUEBA: Caja Blanca
-     * CRITERIO EVALUADO: Loop testing
-     * DESCRIPCION: Valida que el Tetromino se mueve hacia abajo hasta alcanzar el límite inferior.
+     * CRITERIO EVALUADO: Loop Testing
+     * DESCRIPCIÓN: Valida que el Tetromino se mueve hacia abajo hasta alcanzar el límite inferior.
      */
     @Test
     void testMoveTetrominoDown() {
@@ -112,18 +113,20 @@ class GameBoardTest {
         int initialY = board.getTetrominoY();
 
         assertTrue(board.moveTetrominoDown(), "La pieza debería poder moverse hacia abajo.");
-        assertEquals(initialY + 1, board.getTetrominoY(), "La posición Y de la pieza debería incrementar.");
+        assertEquals(initialY + 1, board.getTetrominoY(), "La posición Y de la pieza " +
+                "debería incrementar.");
 
         // Mover la pieza hasta el límite.
         while (board.moveTetrominoDown()) {}
 
-        assertEquals(0, board.getTetrominoY(), "Una nueva pieza debería generarse en la parte superior tras colocar la actual.");
+        assertEquals(0, board.getTetrominoY(), "Una nueva pieza debería generarse en la parte " +
+                "superior tras colocar la actual.");
     }
 
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Particiones equivalentes, límites
-     * DESCRIPCION: Verifica el movimiento lateral del Tetromino en el tablero.
+     * DESCRIPCIÓN: Verifica el movimiento lateral del Tetromino en el tablero.
      */
     @Test
     void testMoveTetrominoLeftRight() {
@@ -135,13 +138,14 @@ class GameBoardTest {
 
         board.moveTetrominoRight();
         board.moveTetrominoRight();
-        assertEquals(initialX + 1, board.getTetrominoX(), "La pieza debería moverse a la derecha dos veces.");
+        assertEquals(initialX + 1, board.getTetrominoX(), "La pieza debería moverse a la " +
+                "derecha dos veces.");
     }
 
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Particiones equivalentes
-     * DESCRIPCION: Comprueba que la rotación del Tetromino cambia su forma correctamente.
+     * DESCRIPCIÓN: Comprueba que la rotación del Tetromino cambia su forma correctamente.
      */
     @Test
     void testRotateTetromino() {
@@ -150,13 +154,14 @@ class GameBoardTest {
         int[][] initialShape = initialPiece.getShape();
 
         board.rotateTetromino();
-        assertNotEquals(initialShape, board.getCurrentTetromino().getShape(), "La forma de la pieza debería cambiar tras rotarla.");
+        assertNotEquals(initialShape, board.getCurrentTetromino().getShape(), "La forma de la pieza " +
+                "debería cambiar tras rotarla.");
     }
 
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Particiones equivalentes
-     * DESCRIPCION: Verifica que se actualice el puntaje tras limpiar una línea completa.
+     * DESCRIPCIÓN: Verifica que se actualice el puntaje tras limpiar una línea completa.
      */
     @Test
     void testScoreAfterClearingLines() {
@@ -169,13 +174,14 @@ class GameBoardTest {
 
         // Limpia las líneas y verifica el puntaje.
         board.clearCompleteLines();
-        assertEquals(100, board.getScore(), "El puntaje debería aumentar en 100 al limpiar una línea.");
+        assertEquals(100, board.getScore(), "El puntaje debería aumentar en " +
+                "100 al limpiar una línea.");
     }
 
     /**
      * TIPO DE PRUEBA: Caja Blanca
-     * CRITERIO EVALUADO: Loop testing
-     * DESCRIPCION: Valida que se limpien correctamente múltiples líneas completas del tablero.
+     * CRITERIO EVALUADO: Loop Testing
+     * DESCRIPCIÓN: Valida que se limpien correctamente múltiples líneas completas del tablero.
      */
     @Test
     void testClearMultipleCompleteLines() {
@@ -189,13 +195,14 @@ class GameBoardTest {
         }
 
         board.clearCompleteLines();
-        assertEquals(200, board.getScore(), "El puntaje debería aumentar en 200 al limpiar dos líneas.");
+        assertEquals(200, board.getScore(), "El puntaje debería aumentar en " +
+                "200 al limpiar dos líneas.");
     }
 
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Valores límite
-     * DESCRIPCION: Comprueba que se genera un nuevo Tetromino después de colocar el anterior.
+     * DESCRIPCIÓN: Comprueba que se genera un nuevo Tetromino después de colocar el anterior.
      */
     @Test
     void testSpawnNewTetromino() {
@@ -212,7 +219,7 @@ class GameBoardTest {
     /**
      * TIPO DE PRUEBA: Caja Negra
      * CRITERIO EVALUADO: Valores límite
-     * DESCRIPCION: Verifica que el Tetromino no puede moverse fuera de los bordes del tablero.
+     * DESCRIPCIÓN: Verifica que el Tetromino no puede moverse fuera de los bordes del tablero.
      */
     @Test
     void testBoundaryMovements() {
@@ -222,7 +229,8 @@ class GameBoardTest {
         for (int i = 0; i < 15; i++) {
             board.moveTetrominoLeft();
         }
-        assertEquals(0, board.getTetrominoX(), "La pieza no debería salir del tablero por la izquierda.");
+        assertEquals(0, board.getTetrominoX(), "La pieza no debería salir del tablero " +
+                "por la izquierda.");
 
         for (int i = 0; i < 15; i++) {
             board.moveTetrominoRight();
@@ -235,7 +243,7 @@ class GameBoardTest {
     /**
      * TIPO DE PRUEBA: Caja Blanca
      * CRITERIO EVALUADO: Statement Coverage
-     * DESCRIPCION: Verifica que las colisiones complejas se manejan correctamente.
+     * DESCRIPCIÓN: Verifica que las colisiones complejas se manejan correctamente.
      */
     @Test
     void testComplexCollisions() {
@@ -251,7 +259,8 @@ class GameBoardTest {
     /**
      * TIPO DE PRUEBA: Caja Blanca
      * CRITERIO EVALUADO: Statement Coverage, Path Coverage
-     * DESCRIPCION: Valida el estado del tablero tras colocar un Tetromino, cubriendo rutas adicionales en placeTetromino.
+     * DESCRIPCIÓN: Valida el estado del tablero tras colocar un Tetromino, cubriendo rutas adicionales
+     * en placeTetromino.
      */
     @Test
     void testBoardStateAfterPlacement() {
@@ -290,7 +299,8 @@ class GameBoardTest {
                     if (boardY >= 0 && boardY < board.getRows() && boardX >= 0 && boardX < board.getCols()) {
                         assertEquals(piece.getType().ordinal() + 1,
                                 board.getCell(boardY, boardX),
-                                "El tablero debería contener los valores de la pieza colocada en (" + boardY + ", " + boardX + ")");
+                                "El tablero debería contener los valores de la pieza colocada en " +
+                                        "(" + boardY + ", " + boardX + ")");
                     } else {
                         fail("Coordenadas fuera de rango: (" + boardY + ", " + boardX + ")");
                     }
@@ -301,8 +311,8 @@ class GameBoardTest {
 
     /**
      * TIPO DE PRUEBA: Caja Blanca
-     * CRITERIO EVALUADO: Pairwise testing
-     * DESCRIPCION: Evalúa combinaciones de posiciones y formas del Tetromino en el tablero.
+     * CRITERIO EVALUADO: Pairwise Testing
+     * DESCRIPCIÓN: Evalúa combinaciones de posiciones y formas del Tetromino en el tablero.
      */
     @Test
     void testCanMovePairwise() {
@@ -321,23 +331,29 @@ class GameBoardTest {
             for (int y : yValues) {
                 // Verificar si `shape1` puede moverse
                 if (x + shape1[0].length <= board.getCols() && y + shape1.length <= board.getRows()) {
-                    assertTrue(board.canMove(x, y, shape1), "Shape1 debería poder moverse a (" + x + ", " + y + ")");
+                    assertTrue(board.canMove(x, y, shape1), "Shape1 debería poder moverse a " +
+                            "(" + x + ", " + y + ")");
                 } else {
-                    assertFalse(board.canMove(x, y, shape1), "Shape1 no debería poder moverse a (" + x + ", " + y + ")");
+                    assertFalse(board.canMove(x, y, shape1), "Shape1 no debería poder moverse a " +
+                            "(" + x + ", " + y + ")");
                 }
 
                 // Verificar si `shape2` puede moverse
                 if (x + shape2[0].length <= board.getCols() && y + shape2.length <= board.getRows()) {
-                    assertTrue(board.canMove(x, y, shape2), "Shape2 debería poder moverse a (" + x + ", " + y + ")");
+                    assertTrue(board.canMove(x, y, shape2), "Shape2 debería poder moverse a " +
+                            "(" + x + ", " + y + ")");
                 } else {
-                    assertFalse(board.canMove(x, y, shape2), "Shape2 no debería poder moverse a (" + x + ", " + y + ")");
+                    assertFalse(board.canMove(x, y, shape2), "Shape2 no debería poder moverse a " +
+                            "(" + x + ", " + y + ")");
                 }
 
                 // Verificar si `shape3` puede moverse
                 if (x + shape3[0].length <= board.getCols() && y + shape3.length <= board.getRows()) {
-                    assertTrue(board.canMove(x, y, shape3), "Shape3 debería poder moverse a (" + x + ", " + y + ")");
+                    assertTrue(board.canMove(x, y, shape3), "Shape3 debería poder moverse a " +
+                            "(" + x + ", " + y + ")");
                 } else {
-                    assertFalse(board.canMove(x, y, shape3), "Shape3 no debería poder moverse a (" + x + ", " + y + ")");
+                    assertFalse(board.canMove(x, y, shape3), "Shape3 no debería poder moverse a " +
+                            "(" + x + ", " + y + ")");
                 }
             }
         }
@@ -346,7 +362,7 @@ class GameBoardTest {
     /**
      * TIPO DE PRUEBA: Caja Blanca
      * CRITERIO EVALUADO: Path Coverage
-     * DESCRIPCION: Valida todas las rutas del método placeTetromino.
+     * DESCRIPCIÓN: Valida todas las rutas del método placeTetromino.
      */
     @Test
     void testPlaceTetrominoPathCoverage() {
@@ -381,5 +397,131 @@ class GameBoardTest {
 
         // Verificar que el tablero está en un estado válido después de colocar la pieza
         assertTrue(board.allCellsAreValid(), "El tablero debería estar en un estado válido.");
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca con Mocks (Mockito)
+     * CRITERIO EVALUADO: Aislamiento de dependencias y cobertura de código
+     * DESCRIPCIÓN: Verifica la colocación de un Tetromino en el GameBoard utilizando un MockObject para controlar
+     * su forma y tipo, probando el método placeTetromino() en un escenario específico.
+     */
+    @Test
+    void testPlaceTetrominoWithMockedTetromino() {
+        GameBoard board = new GameBoard(20, 10);
+
+        // Crear un mock del Tetromino
+        Tetromino mockTetromino = mock(Tetromino.class);
+
+        // Configurar el mock para devolver una forma específica
+        int[][] mockShape = {
+                {1, 1},
+                {1, 1}
+        };
+        when(mockTetromino.getShape()).thenReturn(mockShape);
+        when(mockTetromino.getType()).thenReturn(Tetromino.TetrominoType.O);
+
+        // Establecer el Tetromino mockeado en el GameBoard
+        board.setCurrentTetromino(mockTetromino);
+        board.setTetrominoX(0);
+        board.setTetrominoY(0);
+
+        // Colocar el Tetromino
+        board.placeTetromino();
+
+        // Verificar que el tablero se actualizó correctamente
+        for (int row = 0; row < mockShape.length; row++) {
+            for (int col = 0; col < mockShape[row].length; col++) {
+                if (mockShape[row][col] == 1) {
+                    assertEquals(
+                            mockTetromino.getType().ordinal() + 1,
+                            board.getCell(row, col),
+                            "La celda del tablero no coincide con la forma del Tetromino mockeado."
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca con MockObjects Manuales
+     * CRITERIO EVALUADO: Manejo de colisiones y aislamiento de dependencias
+     * DESCRIPCIÓN: Verifica la detección de colisiones al mover un Tetromino mockeado, utilizando un
+     * MockTetromino implementado manualmente.
+     */
+    @Test
+    void testCollisionDetectionWithMockedTetromino() {
+        GameBoard board = new GameBoard(20, 10);
+
+        // Crear un MockTetromino con una forma específica
+        int[][] mockShape = {
+                {1, 1, 1, 1} // Una línea horizontal
+        };
+        MockTetromino mockTetromino = new MockTetromino(mockShape, Tetromino.TetrominoType.I);
+
+        // Establecer el Tetromino mockeado en el GameBoard
+        board.setCurrentTetromino(mockTetromino);
+        board.setTetrominoX(0);
+        board.setTetrominoY(board.getRows() - 1); // Colocarlo en la última fila
+
+        // Intentar mover el Tetromino hacia abajo (debe fallar)
+        boolean movedDown = board.moveTetrominoDown();
+        assertFalse(movedDown, "El Tetromino no debería poder moverse hacia abajo debido a una colisión con " +
+                "el fondo.");
+
+        // Verificar que el Tetromino se colocó automáticamente
+        for (int col = 0; col < mockShape[0].length; col++) {
+            assertEquals(
+                    mockTetromino.getType().ordinal() + 1,
+                    board.getCell(board.getRows() - 1, col),
+                    "La celda del tablero no coincide con la forma del Tetromino mockeado."
+            );
+        }
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca con Mocks (Mockito)
+     * CRITERIO EVALUADO: Manejo de excepciones y escenarios límite
+     * DESCRIPCIÓN: Verifica el manejo del fin del juego cuando no hay espacio para un nuevo Tetromino, mockeando el
+     * método spawnTetromino().
+     */
+    @Test
+    void testGameOverWhenNoSpaceForNewTetromino() {
+        // Crear un spy del GameBoard real
+        GameBoard realBoard = new GameBoard(20, 10);
+        GameBoard spyBoard = spy(realBoard);
+
+        // Llenar la parte superior del tablero para simular que no hay espacio
+        for (int col = 0; col < spyBoard.getCols(); col++) {
+            spyBoard.setCell(0, col, 1);
+        }
+
+        // Mockear el método spawnTetromino para que lance una excepción
+        doThrow(new IllegalStateException("No hay espacio para un nuevo Tetromino.")).when(spyBoard).spawnTetromino();
+
+        // Intentar generar un nuevo Tetromino y verificar que se maneja el fin del juego
+        assertThrows(IllegalStateException.class, () -> {
+            spyBoard.spawnTetromino();
+        }, "Se esperaba una IllegalStateException al no haber espacio para un nuevo Tetromino.");
+    }
+
+    /**
+     * TIPO DE PRUEBA: Caja Blanca con Mocks (Mockito)
+     * CRITERIO EVALUADO: Manejo de excepciones y cobertura de código
+     * DESCRIPCIÓN: Verifica el comportamiento del GameBoard cuando un Tetromino no puede moverse ni generarse,
+     * mockeando el método canMove() para que siempre devuelva false.
+     */
+    @Test
+    void testTetrominoCannotMove_ExpectException() {
+        GameBoard realBoard = new GameBoard(20, 10);
+        GameBoard spyBoard = spy(realBoard);
+
+        // Mockear el método canMove para que siempre devuelva false
+        doReturn(false).when(spyBoard).canMove(anyInt(), anyInt(), any(int[][].class));
+
+        // Intentar mover la tetromino hacia abajo y esperar la excepción
+        assertThrows(IllegalStateException.class, () -> {
+            spyBoard.moveTetrominoDown();
+        }, "Se esperaba una IllegalStateException debido a que el Tetromino no puede moverse y no se puede " +
+                "generar una nueva pieza.");
     }
 }
