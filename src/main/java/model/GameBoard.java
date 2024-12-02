@@ -279,7 +279,7 @@ public class GameBoard {
      * @param newY Nueva posición Y.
      * @return `true` si puede moverse; `false` de lo contrario.
      */
-    private boolean canMove(int newX, int newY) {
+     public boolean canMove(int newX, int newY) {
         return canMove(newX, newY, currentTetromino.getShape());
     }
 
@@ -291,7 +291,7 @@ public class GameBoard {
      * @param shape Forma a verificar.
      * @return `true` si puede moverse; `false` de lo contrario.
      */
-    private boolean canMove(int newX, int newY, int[][] shape) {
+    public boolean canMove(int newX, int newY, int[][] shape) {
         for (int row = 0; row < shape.length; row++) {
             for (int col = 0; col < shape[row].length; col++) {
                 if (shape[row][col] == 1) {
