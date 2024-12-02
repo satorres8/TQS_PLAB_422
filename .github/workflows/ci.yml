@@ -19,7 +19,6 @@ jobs:
           mvn -version
           java --version
 
-
       # 1. Clonar el repositorio
       - name: Checkout code
         uses: actions/checkout@v3
@@ -35,7 +34,8 @@ jobs:
       - name: Verify Java version
         run: java --version
 
-      # 4. Instalar Maven
+      # 4. Instalar Maven (opcional, ya está instalado en ubuntu-latest)
+      # Puedes eliminar este paso si no es necesario.
       - name: Install Maven
         run: sudo apt-get install -y maven
 
@@ -43,14 +43,18 @@ jobs:
       - name: Check Maven version
         run: mvn -version
 
-      # 6. Construir el proyecto y compilar
+      # 6. Ejecutar Checkstyle
+      - name: Run Checkstyle
+        run: mvn checkstyle:check
+
+      # 7. Construir el proyecto y compilar
       - name: Build with Maven
         run: mvn clean install
 
-      # 7. Ejecutar pruebas
+      # 8. Ejecutar pruebas
       - name: Run tests
         run: mvn test
 
-      # 8. Generar reporte de cobertura con JaCoCo
+      # 9. Generar reporte de cobertura con JaCoCo
       - name: Generate Coverage Report
         run: mvn jacoco:report

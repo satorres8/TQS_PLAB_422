@@ -115,8 +115,6 @@ class GameBoardTest {
         assertFalse(canMove, "El método canMove no detectó la colisión con una celda ocupada.");
     }
 
-
-
     /**
      * TIPO DE PRUEBA: Caja Blanca
      * CRITERIO EVALUADO: Loop Testing
