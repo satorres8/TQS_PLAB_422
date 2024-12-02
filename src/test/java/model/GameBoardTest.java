@@ -98,9 +98,17 @@ class GameBoardTest {
     @Test
     void testCanMoveCollision() {
         GameBoard board = new GameBoard(20, 10);
-        board.setCell(0, 0, 1);
-        assertFalse(board.canMove(0, 0));
+        board.setCell(0, 0, 1); // Ocupamos la celda (0, 0)
+
+        // Definimos una forma que ocupa la posición (0, 0)
+        int[][] shape = {
+                {1}
+        };
+
+        // Intentamos mover la forma a la posición (0, 0)
+        assertFalse(board.canMove(0, 0, shape), "Se esperaba que canMove devolviera false debido a una colisión en (0, 0).");
     }
+
 
     /**
      * TIPO DE PRUEBA: Caja Blanca
